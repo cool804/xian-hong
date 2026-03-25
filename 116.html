@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作業展示</title>
+    <style>
+        body {
+            font-family: "Times New Roman", serif; /* 使用襯線字體 */
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* 第一個標題：上方有黑線 */
+        .heading-1 {
+            display: inline-block;
+            font-size: 2em;
+            font-weight: bold;
+            text-decoration: overline; /* 上劃線 */
+            margin-bottom: 20px;
+        }
+
+        /* 第二個標題：斜體且有黃色邊框 */
+        .heading-2 {
+            display: inline-block;
+            font-size: 1.5em;
+            font-style: italic; /* 斜體 */
+            border: 2px solid yellow; /* 黃色邊框 */
+            padding: 2px 10px;
+            width: 95%; /* 模擬圖片中長條狀的外框 */
+            margin-bottom: 20px;
+        }
+
+        /* 第三個標題：靠右對齊且有下劃線 */
+        .heading-3-container {
+            text-align: right; /* 容器內文字靠右 */
+        }
+
+        .heading-3 {
+            display: inline-block;
+            font-size: 1.17em;
+            font-weight: bold;
+            text-decoration: underline; /* 下劃線 */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="heading-1">This is heading 1</div>
+
+    <br>
+
+    <div class="heading-2">This is heading 2</div>
+
+    <div class="heading-3-container">
+        <div class="heading-3">This is heading 3</div>
+    </div>
+
+</body>
+</html>
