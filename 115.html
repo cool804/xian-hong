@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Style Exercise</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: serif;
+        }
+
+        /* 外層白色容器 */
+        .container {
+            background-color: white;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            width: 500px;
+        }
+
+        /* 通用文字樣式 */
+        h1 {
+            margin: 15px 0;
+            padding: 10px 20px;
+            font-size: 2.5rem;
+        }
+
+        /* 第一個：淺藍背景 + 雙線橘紅邊框 */
+        .box-1 {
+            background-color: #add8e6;
+            border: 4px double #ff6347;
+            color: black;
+        }
+
+        /* 第二個：黃色背景 + 藍色實線圓角邊框 */
+        .box-2 {
+            background-color: #ffff00;
+            border: 3px solid #0000ff;
+            border-radius: 15px;
+            color: black;
+        }
+
+        /* 第三個：綠色背景 + 灰色粗虛線邊框 */
+        .box-3 {
+            background-color: #3cb371;
+            border: 8px dashed #808080;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="box-1">Hello World</h1>
+        <h1 class="box-2">Hello World</h1>
+        <h1 class="box-3">Hello World</h1>
+    </div>
+
+</body>
+</html>
