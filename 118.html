@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Layout Practice</title>
+    <style>
+        body {
+            font-family: serif;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+            background-color: #f9f9f9;
+        }
+
+        /* 外層卡片容器 */
+        .container {
+            width: 600px;
+            padding: 30px;
+            background-color: white;
+            border: 1px solid #ddd;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            line-height: 1.6;
+            position: relative;
+        }
+
+        /* 內聯塊級元素樣式 (Some inline-blocks) */
+        .inline-box {
+            display: inline-block;
+            background-color: yellow;
+            border: 1px solid blue;
+            padding: 2px 5px;
+            font-weight: normal;
+        }
+
+        /* 浮動區塊樣式 (A float div with overflow auto) */
+        .float-box {
+            float: right;
+            width: 150px;
+            height: 150px;
+            border: 2px solid #76a02d; /* 綠色邊框 */
+            margin-left: 15px;
+            margin-bottom: 10px;
+            padding: 10px;
+            overflow: auto; /* 自動顯示滾動條 */
+            font-size: 14px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 右側浮動方框 -->
+    <div class="float-box">
+        A float div with overflow auto. 
+        A float div with overflow auto. 
+        A float div with overflow auto. 
+        A float div with overflow auto. 
+        A float div with overflow auto.
+    </div>
+
+    <!-- 主要文字內容 -->
+    <p>
+        (Just long sentence.) Let me not to the marriage of true minds 
+        Admit impediments. <span class="inline-box">Love</span> is not love 
+        Which alters when it alteration finds, Or bends with 
+        the remover to remove: O, no! it is an ever-fix'ed 
+        mark, That looks on tempests and is never shaken; It 
+        is the star to every wand'ring bark, Whose worth's 
+        unknown, although his heighth be taken. <span class="inline-box">Love's</span> not 
+        Time's fool, though rosy lips and cheeks Within his bending sickle's 
+        compass come; <span class="inline-box">Love</span> alters not with his brief hours and weeks, But 
+        bears it out even to the edge of doom: If this be error and upon me 
+        proved, I never writ, nor no man ever loved.
+    </p>
+</div>
+
+</body>
+</html>
