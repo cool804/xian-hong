@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>網頁作業練習</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 50px;
+            background-color: #f0f0f0;
+        }
+
+        /* 表格樣式 */
+        table {
+            border-collapse: collapse;
+            width: 300px;
+            background-color: white;
+            border: 1px solid #000;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: left;
+        }
+
+        /* 表頭灰色背景 */
+        th {
+            background-color: #808080;
+            color: white;
+        }
+
+        /* 指定行數背景顏色 */
+        tr:nth-child(2) { background-color: #ffff00; } /* 第1列資料(黃色) */
+        tr:nth-child(3) { background-color: #ffffff; } /* 第2列資料(白色) */
+        tr:nth-child(4) { background-color: #ffff00; } /* 第3列資料(黃色) */
+
+        /* 固定位置的 Div */
+        .fixed-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 150px;
+            height: 100px;
+            border: 2px solid #4CAF50; /* 綠色邊框 */
+            padding: 10px;
+            background-color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 表格部分 -->
+    <table>
+        <thead>
+            <tr>
+                <th>Firstname</th>
+                <th>Lastname</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>3</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 固定位置元素 -->
+    <div class="fixed-box">
+        This div element has position: fixed;
+    </div>
+
+</body>
+</html>
