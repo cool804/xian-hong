@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS Image Styling</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* 左圖（無變形 + 圓角） */
+        .left-img {
+            width: 33%;
+            max-width: 300px;
+            border-radius: 18px;
+            object-fit: cover; /* 不變形 */
+        }
+
+        /* 中間圓形 */
+        .circle-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid purple;
+            object-fit: cover;
+        }
+
+        /* 右圖（有變形） */
+        .right-img {
+            width: 33%;
+            max-width: 300px;
+            height: 300px;
+            object-fit: fill; /* 故意讓它變形 */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img class="left-img" src="https://picsum.photos/id/1015/600/800">
+    
+    <img class="circle-img" src="https://picsum.photos/id/1016/600/600">
+    
+    <img class="right-img" src="https://picsum.photos/id/1015/600/800">
+</div>
+
+</body>
+</html>
