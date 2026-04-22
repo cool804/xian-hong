@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Responsive Layout Practice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+
+    .card {
+      width: 90%;
+      max-width: 560px;
+      background: #ffffff;
+      border: 10px solid #f5f5f5;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .top {
+      background: #a8cf45;
+      height: 90px;
+      margin-bottom: 6px;
+    }
+
+    .middle {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .middle .box {
+      background: #18b9cc;
+      height: 130px;
+    }
+
+    .bottom {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .bottom .box {
+      background: #d7dfe2;
+      height: 55px;
+    }
+
+    /* 當寬度小於 480px 時，改成左圖那種排法 */
+    @media (max-width: 479px) {
+      .top {
+        height: 70px;
+      }
+
+      .middle {
+        grid-template-columns: 1fr;
+      }
+
+      .middle .box {
+        height: 70px;
+      }
+
+      .bottom {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .bottom .box {
+        height: 45px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="top"></div>
+
+    <div class="middle">
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+    </div>
+
+    <div class="bottom">
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+    </div>
+  </div>
+</body>
+</html>
