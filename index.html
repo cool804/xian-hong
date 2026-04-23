@@ -1,21 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Xian-Hong Wu</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Engineer x Designer Button Demo</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <main class="page">
+    <section class="card">
+      <header class="card-header">
+        <div>
+          <p class="eyebrow">UI Collaboration Demo</p>
+          <h1>Specified Button Web Page</h1>
+          <p class="subtitle">
+            Recreated from the design draft: a small rounded button placed near the image.
+            Clicking the button reveals detailed information below the image.
+          </p>
+        </div>
+        <button id="detailBtn" class="spec-btn" type="button" aria-expanded="false" aria-controls="detailPanel">
+          查看資訊
+        </button>
+      </header>
 
-<h1 style="font-size:10px;" title="I am a heading"> Xian-Hong Wu</h1>
-<hr>
-<h2> Xian-Hong Wu</h2>
-<ul>
-  <li>handsome</li>
-  <li>humorous</li>
-<ol>
-  <li>tall</li>
-  <li>shooter</li>
-  
-<p style="color:red" title="i am a tooltip">Hello!<br> 113403032.</p>
+      <section class="preview-area">
+        <div class="image-frame" aria-label="demo image">
+          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80" alt="Scenic bridge and waterfront at sunset" />
+        </div>
+      </section>
 
+      <section id="detailPanel" class="detail-panel" hidden>
+        <h2>Detailed Information</h2>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="label">Button size</span>
+            <span class="value">h22 / radius 8</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Font</span>
+            <span class="value">Roboto Regular 13px</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Text color</span>
+            <span class="value">#2f2f2f</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Background</span>
+            <span class="value">#ffffff</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Border</span>
+            <span class="value">1px solid #2f2f2f</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Interaction</span>
+            <span class="value">Click to expand/collapse details below the image</span>
+          </div>
+        </div>
+        <p class="detail-note">
+          This page intentionally skips the image list on the left, matching the requirement in the prompt.
+        </p>
+      </section>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
