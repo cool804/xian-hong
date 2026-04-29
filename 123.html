@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mouse Interaction Button</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+        }
+
+        .box {
+            width: 260px;
+            height: 150px;
+            border: 1px solid #999;
+            padding: 20px;
+        }
+
+        #text {
+            font-family: "Times New Roman", serif;
+            font-size: 32px;
+            color: black;
+            margin-bottom: 25px;
+        }
+
+        button {
+            font-size: 22px;
+            padding: 5px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="box">
+        <div id="text">Hello</div>
+        <button 
+            onmouseover="mouseOverButton()" 
+            onclick="mouseClickButton()">
+            Button
+        </button>
+    </div>
+
+    <script>
+        function mouseOverButton() {
+            const text = document.getElementById("text");
+            text.innerHTML = "Hello";
+            text.style.color = "magenta";
+        }
+
+        function mouseClickButton() {
+            const text = document.getElementById("text");
+            text.innerHTML = "Mouse Click";
+            text.style.color = "magenta";
+        }
+    </script>
+
+</body>
+</html>
