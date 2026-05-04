@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>臺灣海域漁獲動態視覺圖</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #eef8fb 0%, #e7f3f6 100%);
+      color: #153447;
+      padding: 28px;
+    }
+
+    .app-layout {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .map-panel,
+    .info-panel {
+      background: white;
+      border-radius: 28px;
+      padding: 26px;
+      box-shadow: 0 18px 45px rgba(22, 69, 91, 0.12);
+      border: 1px solid #ddedf2;
+    }
+
+    .season-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .season-tabs button {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 20px;
+      background: #e8f4f7;
+      color: #285468;
+      cursor: pointer;
+      font-weight: 800;
+      transition: 0.2s;
+    }
+
+    .season-tabs button.active,
+    .season-tabs button:hover {
+      background: #0f87a6;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .taiwan-map {
+      position: relative;
+      height: 520px;
+      border-radius: 24px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 10% 18%, rgba(255,255,255,0.28) 0 2px, transparent 3px),
+        radial-gradient(circle at 86% 72%, rgba(255,255,255,0.20) 0 2px, transparent 3px),
+        linear-gradient(145deg, #d6f5ff 0%, #71c3e8 42%, #1679bd 100%);
+      border: 1px solid #c6e5ef;
+    }
+
+    .map-title {
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      z-index: 3;
+      color: #0c506c;
+      background: rgba(255,255,255,0.82);
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-weight: 900;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .map-svg {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(58%, 300px);
+      max-height: 82%;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 18px 26px rgba(0, 55, 95, 0.25));
+      z-index: 2;
+    }
+
+    .taiwan-land {
+      fill: url(#landGradient);
+      stroke: rgba(255,255,255,0.92);
+      stroke-width: 5;
+    }
+
+    .mountain-line {
+      fill: none;
+      stroke: rgba(33, 104, 76, 0.36);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 8 10;
+    }
+
+    .city-dot {
+      fill: #f7c76a;
+      stroke: white;
+      stroke-width: 2;
+    }
+
+    .city-label {
+      fill: #1e5a62;
+      font-size: 18px;
+      font-weight: 800;
+      paint-order: stroke;
+      stroke: rgba(255,255,255,0.86);
+      stroke-width: 4px;
+      stroke-linejoin: round;
+    }
+
+    .sea-region {
+      position: absolute;
+      z-index: 1;
+      border: 2px solid rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.85);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .sea-north {
+      top: 80px;
+      left: 32%;
+      width: 36%;
+      height: 105px;
+      border-radius: 46% 54% 42% 58%;
+    }
+
+    .sea-east {
+      top: 165px;
+      right: 20px;
+      width: 33%;
+      height: 260px;
+      border-radius: 58% 42% 52% 48%;
+    }
+
+    .sea-west {
+      top: 165px;
+      left: 20px;
+      width: 33%;
+      height: 260px;
+      border-radius: 42% 58% 48% 52%;
+    }
+
+    .sea-south {
+      bottom: 48px;
+      left: 31%;
+      width: 38%;
+      height: 105px;
+      border-radius: 50% 50% 55% 45%;
+    }
+
+    .area-btn {
+      position: absolute;
+      z-index: 4;
+      min-width: 128px;
+      padding: 11px 14px;
+      border: 2px solid rgba(255,255,255,0.8);
+      background: rgba(8, 102, 139, 0.88);
+      color: white;
+      border-radius: 16px;
+      cursor: pointer;
+      font-weight: 800;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.2);
+      transition: 0.25s;
+    }
+
+    .area-btn:hover,
+    .area-btn.active {
+      background: #ffb84d;
+      color: #173b4b;
+      transform: scale(1.06);
+    }
+
+    .area-north { top: 92px; left: 50%; translate: -50% 0; }
+    .area-east { top: 250px; right: 28px; }
+    .area-west { top: 250px; left: 28px; }
+    .area-south { bottom: 65px; left: 50%; translate: -50% 0; }
+
+    .penghu {
+      position: absolute;
+      left: 33%;
+      top: 47%;
+      z-index: 3;
+      color: #194e62;
+      font-size: 0.82rem;
+      font-weight: 900;
+      background: rgba(255,255,255,0.72);
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+
+    .penghu::before,
+    .penghu::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #eed27d;
+      border: 2px solid white;
+      border-radius: 50%;
+    }
+
+    .penghu::before { left: -18px; top: 6px; }
+    .penghu::after { left: -28px; top: 20px; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+      color: #426172;
+      font-size: 0.95rem;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .green { background: #2eae62; }
+    .yellow { background: #f5b942; }
+    .red { background: #d94d4d; }
+
+    .fish-card {
+      border-radius: 26px;
+      overflow: hidden;
+      background: #f6fbfd;
+      border: 1px solid #d8edf3;
+    }
+
+    .fish-image {
+      min-height: 230px;
+      background:
+        linear-gradient(rgba(10,45,65,.18), rgba(10,45,65,.18)),
+        url("https://images.unsplash.com/photo-1534043464124-3be32fe000c9?auto=format&fit=crop&w=1000&q=80") center/cover;
+      display: flex;
+      align-items: end;
+      padding: 22px;
+      color: white;
+    }
+
+    .fish-image h3 {
+      font-size: 2rem;
+      text-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    }
+
+    .fish-content {
+      padding: 24px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 14px;
+      background: white;
+      border: 1px solid #d8edf3;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .fish-content p {
+      line-height: 1.8;
+      color: #4d6b78;
+      margin-bottom: 16px;
+    }
+
+    .data-bars {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .bar-row span {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      margin-bottom: 7px;
+      color: #315467;
+      font-weight: 700;
+    }
+
+    .bar-bg {
+      height: 12px;
+      border-radius: 999px;
+      background: #dcecf2;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #12a3c7, #7cd0e0);
+      transition: width 0.4s;
+    }
+
+    .fish-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .mini-fish {
+      background: white;
+      border: 1px solid #dbeef3;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .mini-fish strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #174f6a;
+    }
+
+    .mini-fish small {
+      color: #65818d;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      body { padding: 18px; }
+      .app-layout { grid-template-columns: 1fr; }
+      .taiwan-map { height: 540px; }
+      .map-svg { width: min(54%, 260px); }
+      .area-east { right: 14px; }
+      .area-west { left: 14px; }
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 12px; }
+      .map-panel, .info-panel { padding: 18px; border-radius: 22px; }
+      .taiwan-map { height: 500px; }
+      .map-title { font-size: 0.9rem; }
+      .area-btn { min-width: 104px; padding: 9px 10px; font-size: 0.9rem; }
+      .area-east { top: 255px; right: 8px; }
+      .area-west { top: 255px; left: 8px; }
+      .area-north { top: 94px; }
+      .area-south { bottom: 70px; }
+      .sea-region { font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-layout">
+    <section class="map-panel">
+      <div class="season-tabs">
+        <button data-season="春季">春季</button>
+        <button data-season="夏季">夏季</button>
+        <button data-season="秋季">秋季</button>
+        <button class="active" data-season="冬季">冬季</button>
+      </div>
+
+      <div class="taiwan-map">
+        <div class="map-title">台灣周邊海域互動地圖</div>
+
+        <div class="sea-region sea-north">北部海域</div>
+        <div class="sea-region sea-east">東部海域</div>
+        <div class="sea-region sea-west">西部海域</div>
+        <div class="sea-region sea-south">南部海域</div>
+        <div class="penghu">澎湖</div>
+
+        <svg class="map-svg" viewBox="0 0 360 720" role="img" aria-label="台灣地圖 SVG">
+          <defs>
+            <linearGradient id="landGradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#8ecf79" />
+              <stop offset="45%" stop-color="#e4d28c" />
+              <stop offset="100%" stop-color="#6bbd76" />
+            </linearGradient>
+          </defs>
+
+          <path class="taiwan-land" d="
+            M 205 22
+            C 245 42, 274 82, 289 139
+            C 307 209, 304 282, 292 340
+            C 280 399, 269 453, 254 510
+            C 240 563, 225 618, 193 682
+            C 181 704, 164 704, 153 681
+            C 127 628, 110 580, 90 528
+            C 66 466, 48 406, 45 343
+            C 42 274, 54 210, 76 154
+            C 98 100, 132 55, 171 29
+            C 184 20, 194 17, 205 22
+            Z" />
+
+          <path class="mountain-line" d="M 205 70 C 198 130, 210 185, 194 246 C 178 308, 193 368, 174 432 C 159 485, 169 548, 151 626" />
+
+          <circle class="city-dot" cx="198" cy="82" r="7" />
+          <text class="city-label" x="214" y="88">台北</text>
+          <circle class="city-dot" cx="85" cy="280" r="7" />
+          <text class="city-label" x="23" y="288">台中</text>
+          <circle class="city-dot" cx="86" cy="476" r="7" />
+          <text class="city-label" x="22" y="484">台南</text>
+          <circle class="city-dot" cx="112" cy="560" r="7" />
+          <text class="city-label" x="42" y="568">高雄</text>
+          <circle class="city-dot" cx="242" cy="315" r="7" />
+          <text class="city-label" x="255" y="322">花蓮</text>
+          <circle class="city-dot" cx="220" cy="530" r="7" />
+          <text class="city-label" x="235" y="538">台東</text>
+        </svg>
+
+        <button class="area-btn area-north" data-area="北部海域">北部海域</button>
+        <button class="area-btn area-east" data-area="東部海域">東部海域</button>
+        <button class="area-btn area-west" data-area="西部海域">西部海域</button>
+        <button class="area-btn area-south active" data-area="南部海域">南部海域</button>
+      </div>
+
+      <div class="legend">
+        <span><i class="dot green"></i>供給正常</span>
+        <span><i class="dot yellow"></i>建議適量</span>
+        <span><i class="dot red"></i>短缺或保育提醒</span>
+      </div>
+    </section>
+
+    <section class="info-panel">
+      <div class="fish-card">
+        <div class="fish-image">
+          <h3 id="fishTitle">虱目魚</h3>
+        </div>
+        <div class="fish-content">
+          <div class="status-badge" id="statusBadge"><i class="dot green"></i>供給正常</div>
+          <p id="fishDesc">南部魚種可做成全年穩定供給範例，方便與短缺魚種比較。</p>
+          <p id="fishTip"><strong>消費建議：</strong>適合做為責任消費的推薦選項。</p>
+
+          <div class="data-bars">
+            <div class="bar-row">
+              <span><b>市場供給</b><b id="supplyText">78%</b></span>
+              <div class="bar-bg"><div class="bar-fill" id="supplyBar" style="width:78%"></div></div>
+            </div>
+            <div class="bar-row">
+              <span><b>價格熱度</b><b id="priceText">55%</b></span>
+              <div class="bar-bg"><div class="bar-fill" id="priceBar" style="width:55%"></div></div>
+            </div>
+            <div class="bar-row">
+              <span><b>永續建議</b><b id="ecoText">76%</b></span>
+              <div class="bar-bg"><div class="bar-fill" id="ecoBar" style="width:76%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fish-grid">
+        <div class="mini-fish">
+          <strong id="subFish1">午仔魚</strong>
+          <small>可作為同海域延伸魚種資訊。</small>
+        </div>
+        <div class="mini-fish">
+          <strong id="subFish2">鯖魚</strong>
+          <small>未來可加入圖片、產季與料理建議。</small>
+        </div>
+        <div class="mini-fish">
+          <strong id="subFish3">石斑</strong>
+          <small>可搭配保育等級或食用提醒。</small>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const data = {
+      "春季": {
+        "北部海域": { fish: "白帶魚", status: "供給正常", color: "green", supply: 82, price: 56, eco: 74, desc: "春季北部海域常見魚種之一，適合以清蒸、煎烤等方式料理。此區魚貨選擇多，適合做成入門推薦區。", tip: "可優先選擇來源清楚、尺寸成熟的魚貨，避免購買過小個體。", subs: ["花枝", "透抽", "小卷"] },
+        "東部海域": { fish: "鬼頭刀", status: "建議適量", color: "yellow", supply: 61, price: 70, eco: 58, desc: "東部海域水深變化大，洄游性魚類較具特色。鬼頭刀適合做為季節性介紹魚種。", tip: "建議搭配產季資訊，提醒使用者適量消費。", subs: ["飛魚", "旗魚", "鰹魚"] },
+        "西部海域": { fish: "文蛤", status: "供給正常", color: "green", supply: 88, price: 48, eco: 80, desc: "西部沿岸養殖與近海漁產豐富，文蛤容易被一般消費者理解，適合做互動卡片示範。", tip: "可標示本地養殖、碳足跡較低等特色，連結責任消費。", subs: ["虱目魚", "牡蠣", "吳郭魚"] },
+        "南部海域": { fish: "虱目魚", status: "供給正常", color: "green", supply: 84, price: 52, eco: 78, desc: "南部常見養殖魚種，與日常飲食連結度高，適合做成推薦食用範例。", tip: "可加入料理方式與產地介紹，提升使用者停留時間。", subs: ["石斑", "午仔魚", "鯖魚"] }
+      },
+      "夏季": {
+        "北部海域": { fish: "透抽", status: "供給正常", color: "green", supply: 76, price: 62, eco: 70, desc: "夏季適合呈現頭足類漁獲資訊，搭配夜市與料理情境可提升親切感。", tip: "選擇新鮮且來源清楚的透抽，避免過度消費稀少魚種。", subs: ["小卷", "白帶魚", "花枝"] },
+        "東部海域": { fish: "飛魚", status: "建議適量", color: "yellow", supply: 68, price: 65, eco: 62, desc: "飛魚具東部與離島特色，適合做文化與季節性魚種介紹。", tip: "可加入產季提醒，避免非產季購買。", subs: ["鬼頭刀", "鰹魚", "旗魚"] },
+        "西部海域": { fish: "牡蠣", status: "供給正常", color: "green", supply: 80, price: 54, eco: 76, desc: "西部牡蠣養殖具代表性，可用來說明本地養殖與永續消費。", tip: "注意產地、保存與衛生資訊。", subs: ["文蛤", "虱目魚", "白蝦"] },
+        "南部海域": { fish: "石斑", status: "短缺警示", color: "red", supply: 38, price: 86, eco: 42, desc: "石斑價格與供給變動較明顯，適合示範短缺警示與替代魚種推薦。", tip: "供給低時可推薦其他常見魚種，降低特定魚種壓力。", subs: ["虱目魚", "午仔魚", "鯖魚"] }
+      },
+      "秋季": {
+        "北部海域": { fish: "鯖魚", status: "供給正常", color: "green", supply: 86, price: 50, eco: 77, desc: "秋季可將鯖魚設為推薦魚種，呈現產季與市場供給穩定。", tip: "適合用燈號標示推薦食用。", subs: ["白帶魚", "花枝", "透抽"] },
+        "東部海域": { fish: "鰹魚", status: "建議適量", color: "yellow", supply: 64, price: 66, eco: 60, desc: "東部洄游魚類可呈現季節變化，讓使用者理解海域差異。", tip: "建議補充捕撈方式與食用建議。", subs: ["鬼頭刀", "飛魚", "旗魚"] },
+        "西部海域": { fish: "虱目魚", status: "供給正常", color: "green", supply: 83, price: 49, eco: 79, desc: "西部與南部皆可呈現虱目魚，但可依地區改寫產地特色。", tip: "可設計比較卡片，讓使用者知道不同地區差異。", subs: ["文蛤", "牡蠣", "白蝦"] },
+        "南部海域": { fish: "午仔魚", status: "供給正常", color: "green", supply: 75, price: 58, eco: 72, desc: "午仔魚適合做成南部推薦魚種，搭配市場價格與料理建議。", tip: "提醒挑選來源透明的魚貨。", subs: ["虱目魚", "石斑", "鯖魚"] }
+      },
+      "冬季": {
+        "北部海域": { fish: "白帶魚", status: "建議適量", color: "yellow", supply: 59, price: 69, eco: 57, desc: "冬季可透過供給下降呈現警示效果，讓資料視覺化更明顯。", tip: "供給較少時可推薦替代魚種。", subs: ["鯖魚", "花枝", "透抽"] },
+        "東部海域": { fish: "旗魚", status: "短缺警示", color: "red", supply: 35, price: 90, eco: 40, desc: "大型洄游魚可作為保育提醒示範，避免只呈現好吃而忽略責任消費。", tip: "可加入保育資訊與替代選擇。", subs: ["鰹魚", "鬼頭刀", "飛魚"] },
+        "西部海域": { fish: "文蛤", status: "供給正常", color: "green", supply: 81, price: 51, eco: 78, desc: "冬季仍可呈現養殖貝類的穩定供給，強化本地食材概念。", tip: "可加入養殖方式、產地與保存提醒。", subs: ["牡蠣", "虱目魚", "白蝦"] },
+        "南部海域": { fish: "虱目魚", status: "供給正常", color: "green", supply: 78, price: 55, eco: 76, desc: "南部魚種可做成全年穩定供給範例，方便與短缺魚種比較。", tip: "適合做為責任消費的推薦選項。", subs: ["午仔魚", "鯖魚", "石斑"] }
+      }
+    };
+
+    let currentSeason = "冬季";
+    let currentArea = "南部海域";
+
+    const fishTitle = document.getElementById("fishTitle");
+    const statusBadge = document.getElementById("statusBadge");
+    const fishDesc = document.getElementById("fishDesc");
+    const fishTip = document.getElementById("fishTip");
+    const supplyText = document.getElementById("supplyText");
+    const priceText = document.getElementById("priceText");
+    const ecoText = document.getElementById("ecoText");
+    const supplyBar = document.getElementById("supplyBar");
+    const priceBar = document.getElementById("priceBar");
+    const ecoBar = document.getElementById("ecoBar");
+    const subFish1 = document.getElementById("subFish1");
+    const subFish2 = document.getElementById("subFish2");
+    const subFish3 = document.getElementById("subFish3");
+
+    function updateInfo() {
+      const item = data[currentSeason][currentArea];
+      fishTitle.textContent = item.fish;
+      statusBadge.innerHTML = `<i class="dot ${item.color}"></i>${item.status}`;
+      fishDesc.textContent = item.desc;
+      fishTip.innerHTML = `<strong>消費建議：</strong>${item.tip}`;
+      supplyText.textContent = `${item.supply}%`;
+      priceText.textContent = `${item.price}%`;
+      ecoText.textContent = `${item.eco}%`;
+      supplyBar.style.width = `${item.supply}%`;
+      priceBar.style.width = `${item.price}%`;
+      ecoBar.style.width = `${item.eco}%`;
+      subFish1.textContent = item.subs[0];
+      subFish2.textContent = item.subs[1];
+      subFish3.textContent = item.subs[2];
+    }
+
+    document.querySelectorAll(".season-tabs button").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".season-tabs button").forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+        currentSeason = button.dataset.season;
+        updateInfo();
+      });
+    });
+
+    document.querySelectorAll(".area-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".area-btn").forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+        currentArea = button.dataset.area;
+        updateInfo();
+      });
+    });
+  </script>
+</body>
+</html>
