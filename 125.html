@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Object Properties</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        h2 {
+            color: #555;
+            margin-top: 25px;
+        }
+
+        pre {
+            background-color: #eeeeee;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .property {
+            background-color: #dceeff;
+            padding: 10px;
+            margin: 6px 0;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>JavaScript Object Properties</h1>
+
+        <h2>Original Object</h2>
+        <pre id="originalObject"></pre>
+
+        <h2>All Properties</h2>
+        <div id="properties"></div>
+
+        <h2>Object After Deleting Age</h2>
+        <pre id="afterDelete"></pre>
+    </div>
+
+    <script>
+        var person = {
+            firstName: "Tony",
+            lastName: "Lee",
+            age: 50,
+            eyeColor: "Blue"
+        };
+
+        // 顯示原本的物件
+        document.getElementById("originalObject").textContent = JSON.stringify(person, null, 4);
+
+        // 列出所有屬性
+        let result = "";
+        for (let key in person) {
+            result += `<div class="property">${key}: ${person[key]}</div>`;
+        }
+
+        document.getElementById("properties").innerHTML = result;
+
+        // 刪除 age 屬性
+        delete person.age;
+
+        // 顯示刪除 age 後的物件
+        document.getElementById("afterDelete").textContent = JSON.stringify(person, null, 4);
+    </script>
+
+</body>
+</html>
